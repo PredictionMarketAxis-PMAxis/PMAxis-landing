@@ -1,6 +1,6 @@
 import ThemeToggle from "./ThemeToggle";
 
-const API_URL = "http://167.233.97.217:8088";
+const API_URL = "https://api.pmaxis.trade";
 
 const NAV_LINKS = [
   { label: "Docs",   href: `${API_URL}/docs` },
@@ -75,6 +75,42 @@ const s = {
 export default function Home() {
   return (
     <>
+      <style>{`
+        .nav-links { display: flex; align-items: center; gap: 24px; }
+        .nav-link-item { display: block; }
+        .hero-h1 { font-size: 54px; line-height: 1.08; letter-spacing: -0.03em; }
+        .hero-btns { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; padding: 32px 24px; text-align: center; max-width: 1024px; margin: 0 auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 16px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 16px; }
+        .endpoint-row { display: flex; align-items: center; gap: 16px; padding: 14px 24px; }
+        .endpoint-desc { font-size: 13px; color: var(--muted); }
+        .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 32px 24px; max-width: 1024px; margin: 0 auto; }
+        .footer-links { display: flex; gap: 24px; }
+        .code-snippet { margin-top: 64px; background: #111111; border: 1px solid #1E1E1E; border-radius: 14px; padding: 24px; text-align: left; max-width: 620px; margin: 64px auto 0; overflow-x: auto; }
+        .code-pre { font-family: var(--font-geist-mono), monospace; font-size: 13px; line-height: 1.9; margin: 0; }
+
+        @media (max-width: 640px) {
+          .nav-links { gap: 12px; }
+          .nav-link-item { display: none; }
+          .hero-h1 { font-size: 32px; line-height: 1.15; }
+          .hero-btns { flex-direction: column; align-items: stretch; padding: 0 8px; }
+          .hero-btns a { text-align: center; }
+          .stats-grid { grid-template-columns: repeat(2,1fr); gap: 16px; padding: 24px 16px; }
+          .features-grid { grid-template-columns: 1fr; }
+          .pricing-grid { grid-template-columns: 1fr; }
+          .endpoint-desc { display: none; }
+          .endpoint-row { padding: 12px 16px; gap: 10px; }
+          .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
+          .footer-links { flex-wrap: wrap; gap: 16px; }
+          .code-snippet { border-radius: 10px; padding: 16px; margin-top: 40px; }
+          .code-pre { font-size: 11px; line-height: 1.7; }
+          .section-pad { padding-top: 56px !important; padding-bottom: 56px !important; }
+          .h2-mobile { font-size: 28px !important; }
+          .cta-h2 { font-size: 30px !important; }
+        }
+      `}</style>
+
       {/* NAV */}
       <nav style={s.nav}>
         <div style={s.navInner}>
@@ -82,11 +118,11 @@ export default function Home() {
             {LOGO(36)}
             <span style={s.brandName}>PMAxis</span>
           </a>
-          <div style={s.navLinks}>
+          <div className="nav-links">
             {NAV_LINKS.map(l => (
-              <a key={l.label} href={l.href} style={s.navLink}>{l.label}</a>
+              <a key={l.label} href={l.href} style={s.navLink} className="nav-link-item">{l.label}</a>
             ))}
-            <a href={`${API_URL}/login`} style={s.navLink}>Sign in</a>
+            <a href={`${API_URL}/login`} style={s.navLink} className="nav-link-item">Sign in</a>
             <ThemeToggle />
             <a href={`${API_URL}/signup`} style={s.btnGreen}>Get API key</a>
           </div>
@@ -96,18 +132,18 @@ export default function Home() {
       <main style={{flex:1}}>
 
         {/* HERO */}
-        <section style={{...s.section, paddingTop:96, paddingBottom:80, textAlign:"center"}}>
-          <div className="animate-fadeup" style={{display:"inline-flex", alignItems:"center", gap:8, background:"var(--green-dim)", color:"var(--green-text)", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:999, marginBottom:32, letterSpacing:"0.08em", textTransform:"uppercase", border:"1px solid var(--green-dim)"}}>
+        <section style={{...s.section, paddingTop:96, paddingBottom:80, textAlign:"center"}} className="section-pad">
+          <div style={{display:"inline-flex", alignItems:"center", gap:8, background:"var(--green-dim)", color:"var(--green-text)", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:999, marginBottom:32, letterSpacing:"0.08em", textTransform:"uppercase", border:"1px solid var(--green-dim)"}}>
             <span style={{width:6, height:6, borderRadius:"50%", background:"var(--green)", display:"inline-block"}}></span>
             Live — 53,000+ markets indexed
           </div>
-          <h1 className="animate-fadeup delay-100 font-serif" style={{fontSize:54, lineHeight:1.08, letterSpacing:"-0.03em", color:"var(--text)", marginBottom:24, maxWidth:700, margin:"0 auto 24px"}}>
+          <h1 className="hero-h1 font-serif" style={{color:"var(--text)", marginBottom:24, maxWidth:700, margin:"0 auto 24px"}}>
             Prediction market data,<br/>ready for your application.
           </h1>
-          <p className="animate-fadeup delay-200" style={{fontSize:17, color:"var(--muted)", lineHeight:1.7, maxWidth:520, margin:"0 auto 40px"}}>
+          <p style={{fontSize:17, color:"var(--muted)", lineHeight:1.7, maxWidth:520, margin:"0 auto 40px"}}>
             Real-time prices, orderbooks, trades, signals, and on-chain data across all major prediction markets — one REST API and WebSocket stream.
           </p>
-          <div className="animate-fadeup delay-300" style={{display:"flex", alignItems:"center", justifyContent:"center", gap:16, flexWrap:"wrap"}}>
+          <div className="hero-btns">
             <a href={`${API_URL}/signup`} style={{...s.btnGreen, fontSize:14, padding:"13px 28px", borderRadius:6}}>
               Get free API key
             </a>
@@ -115,14 +151,14 @@ export default function Home() {
           </div>
 
           {/* CODE SNIPPET */}
-          <div className="animate-fadeup delay-400" style={{marginTop:64, background:"#111111", border:"1px solid #1E1E1E", borderRadius:14, padding:24, textAlign:"left", maxWidth:620, margin:"64px auto 0", overflowX:"auto"}}>
+          <div className="code-snippet">
             <div style={{display:"flex", gap:8, marginBottom:20}}>
               <span style={{width:12, height:12, borderRadius:"50%", background:"#FF5F57"}}></span>
               <span style={{width:12, height:12, borderRadius:"50%", background:"#FFBD2E"}}></span>
               <span style={{width:12, height:12, borderRadius:"50%", background:"#28C840"}}></span>
               <span style={{marginLeft:12, fontSize:11, color:"#555", fontFamily:"monospace"}}>terminal</span>
             </div>
-            <pre style={{fontFamily:"var(--font-geist-mono), monospace", fontSize:13, lineHeight:1.9, margin:0}}>
+            <pre className="code-pre">
               <span style={{color:"#555"}}># Get live price for any market</span>{"\n"}
               <span style={{color:"#00E676"}}>curl</span>
               <span style={{color:"#fff"}}> -H </span>
@@ -139,7 +175,7 @@ export default function Home() {
 
         {/* STATS BAR */}
         <section style={{borderTop:"1px solid var(--border)", borderBottom:"1px solid var(--border)", background:"var(--surface)"}}>
-          <div style={{...s.section, display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:32, padding:"32px 24px", textAlign:"center"}}>
+          <div className="stats-grid">
             {[{v:"53,000+",l:"Markets indexed"},{v:"916K+",l:"On-chain trades"},{v:"< 100ms",l:"API latency"},{v:"Free",l:"To start"}].map(x=>(
               <div key={x.l}>
                 <div style={{fontSize:28, fontWeight:700, letterSpacing:"-0.02em", color:"var(--text)"}}>{x.v}</div>
@@ -150,10 +186,10 @@ export default function Home() {
         </section>
 
         {/* FEATURES */}
-        <section style={{...s.section, paddingTop:96, paddingBottom:96}}>
-          <h2 style={s.h2}>Everything your app needs</h2>
+        <section style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad">
+          <h2 style={s.h2} className="h2-mobile">Everything your app needs</h2>
           <p style={s.sub}>One integration gives you access to the full prediction market data stack.</p>
-          <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(280px,1fr))", gap:16}}>
+          <div className="features-grid">
             {FEATURES.map(f=>(
               <div key={f.title} style={s.card}>
                 <div style={{color:"var(--green)", marginBottom:16}}>{f.icon}</div>
@@ -166,18 +202,18 @@ export default function Home() {
 
         {/* ENDPOINTS */}
         <section style={{background:"var(--surface)", borderTop:"1px solid var(--border)", borderBottom:"1px solid var(--border)"}}>
-          <div style={{...s.section, paddingTop:96, paddingBottom:96}}>
-            <h2 style={s.h2}>Clean, predictable API</h2>
+          <div style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad">
+            <h2 style={s.h2} className="h2-mobile">Clean, predictable API</h2>
             <p style={s.sub}>Standard REST conventions. JSON responses. One header for auth.</p>
             <div style={{border:"1px solid var(--border)", borderRadius:12, overflow:"hidden"}}>
               {ENDPOINTS.map((e,i)=>(
-                <div key={e.path} style={{display:"flex", alignItems:"center", gap:16, padding:"14px 24px", borderBottom: i<ENDPOINTS.length-1?"1px solid var(--border)":"none", background:"var(--surface)"}}>
+                <div key={e.path} className="endpoint-row" style={{borderBottom: i<ENDPOINTS.length-1?"1px solid var(--border)":"none", background:"var(--surface)"}}>
                   <span style={{fontFamily:"monospace", fontSize:11, fontWeight:700, padding:"2px 8px", borderRadius:4, width:44, textAlign:"center", flexShrink:0,
                     background: e.method==="WS" ? "var(--tag-ws)" : "var(--tag-get)",
                     color: e.method==="WS" ? "var(--tag-ws-text)" : "var(--tag-get-text)"
                   }}>{e.method}</span>
-                  <code style={{fontFamily:"monospace", fontSize:13, color:"var(--text)", flex:1}}>{e.path}</code>
-                  <span style={{fontSize:13, color:"var(--muted)"}}>{e.desc}</span>
+                  <code style={{fontFamily:"monospace", fontSize:13, color:"var(--text)", flex:1, wordBreak:"break-all"}}>{e.path}</code>
+                  <span className="endpoint-desc">{e.desc}</span>
                 </div>
               ))}
             </div>
@@ -188,10 +224,10 @@ export default function Home() {
         </section>
 
         {/* PRICING */}
-        <section style={{...s.section, paddingTop:96, paddingBottom:96}}>
-          <h2 style={s.h2}>Simple pricing</h2>
+        <section style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad">
+          <h2 style={s.h2} className="h2-mobile">Simple pricing</h2>
           <p style={s.sub}>Start free. Scale when you need to.</p>
-          <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(280px,1fr))", gap:16}}>
+          <div className="pricing-grid">
             {TIERS.map(t=>(
               <div key={t.name} style={{...s.card, display:"flex", flexDirection:"column", position:"relative", opacity: t.soon ? 0.7 : 1}}>
                 {t.soon && (
@@ -228,8 +264,8 @@ export default function Home() {
 
         {/* CTA */}
         <section style={{background:"var(--text)", borderTop:"1px solid var(--border)"}}>
-          <div style={{...s.section, paddingTop:96, paddingBottom:96, textAlign:"center"}}>
-            <h2 className="font-serif" style={{fontSize:44, letterSpacing:"-0.03em", color:"var(--bg)", marginBottom:16}}>
+          <div style={{...s.section, paddingTop:96, paddingBottom:96, textAlign:"center"}} className="section-pad">
+            <h2 className="font-serif cta-h2" style={{fontSize:44, letterSpacing:"-0.03em", color:"var(--bg)", marginBottom:16}}>
               Start building in minutes.
             </h2>
             <p style={{fontSize:15, color:"rgba(128,128,128,0.8)", marginBottom:40, maxWidth:420, margin:"0 auto 40px", lineHeight:1.7}}>
@@ -244,12 +280,12 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer style={{borderTop:"1px solid var(--border)", background:"var(--bg)"}}>
-        <div style={{...s.section, padding:"32px 24px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16}}>
+        <div className="footer-inner">
           <div style={{display:"flex", alignItems:"center", gap:10}}>
             {LOGO(24)}
             <span style={{fontSize:14, fontWeight:600, color:"var(--text)"}}>PMAxis</span>
           </div>
-          <div style={{display:"flex", gap:24}}>
+          <div className="footer-links">
             {[["Docs",`${API_URL}/docs`],["Status",`${API_URL}/status`],["Sign up",`${API_URL}/signup`],["Login",`${API_URL}/login`]].map(([l,h])=>(
               <a key={l} href={h} style={{fontSize:12, color:"var(--muted)", textDecoration:"none"}}>{l}</a>
             ))}
