@@ -9,6 +9,7 @@ const instrumentSerif = Instrument_Serif({ variable: "--font-serif", subsets: ["
 export const metadata: Metadata = {
   title: "PMAxis — Prediction Market Data API",
   description: "Real-time REST API and WebSocket stream for prediction market prices, orderbooks, trades, and signals. Free tier available.",
+  icons: { icon: "/fav-icon.png" },
   openGraph: {
     title: "PMAxis — Prediction Market Data API",
     description: "Real-time prediction market data for developers.",
