@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/* ── Light (default) ── */
+:root {
+  --bg:      #F7F6F3;
+  --surface: #FFFFFF;
+  --surface2:#F0EFec;
+  --border:  #EAEAEA;
+  --text:    #111111;
+  --muted:   #787774;
+  --green:   #00A86B;
+  --green-dim: rgba(0,168,107,0.10);
+  --green-text:#00A86B;
+  --code-bg: #111111;
+  --tag-get: rgba(0,168,107,0.12);
+  --tag-get-text:#00A86B;
+  --tag-ws:  rgba(99,102,241,0.12);
+  --tag-ws-text:#4338CA;
+}
+
+/* ── Dark ── */
+[data-theme="dark"] {
+  --bg:      #0A0A0A;
+  --surface: #111111;
+  --surface2:#161616;
+  --border:  #1E1E1E;
+  --text:    #FFFFFF;
+  --muted:   #A1A1AA;
+  --green:   #00E676;
+  --green-dim: rgba(0,230,118,0.08);
+  --green-text:#00E676;
+  --code-bg: #111111;
+  --tag-get: rgba(0,230,118,0.10);
+  --tag-get-text:#00E676;
+  --tag-ws:  rgba(107,140,255,0.10);
+  --tag-ws-text:#6B8CFF;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
+}
+
+.font-serif { font-family: var(--font-serif), 'Georgia', serif; }
+.font-mono  { font-family: var(--font-geist-mono), 'Courier New', monospace; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeup { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
