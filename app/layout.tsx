@@ -9,7 +9,7 @@ const instrumentSerif = Instrument_Serif({ variable: "--font-serif", subsets: ["
 export const metadata: Metadata = {
   title: "PMAxis — Prediction Market Data API",
   description: "Real-time REST API and WebSocket stream for prediction market prices, orderbooks, trades, and signals. Free tier available.",
-  icons: { icon: "/fav-icon.png" },
+  icons: { icon: "/loader-gif.gif" },
   openGraph: {
     title: "PMAxis — Prediction Market Data API",
     description: "Real-time prediction market data for developers.",
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <head>
-        <link rel="icon" href="/fav-icon.png" type="image/png" />
+        <link rel="icon" href="/loader-gif.gif" type="image/gif" />
         {/* Apply theme before paint to avoid flash */}
         <script dangerouslySetInnerHTML={{ __html: `(function(){try{var m=document.cookie.match(/pmaxis-theme=(light|dark)/);var t=m?m[1]:(localStorage.getItem('pmaxis-theme')||'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();` }} />
       </head>
