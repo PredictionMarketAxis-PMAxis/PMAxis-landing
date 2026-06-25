@@ -79,41 +79,49 @@ export default function Home() {
         .nav-links { display: flex; align-items: center; gap: 24px; }
         .nav-link-item { display: block; }
         .hero-h1 { font-size: 54px; line-height: 1.08; letter-spacing: -0.03em; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 999px; margin-bottom: 32px; letter-spacing: 0.08em; text-transform: uppercase; }
+        .hero-sub { font-size: 17px; color: var(--muted); line-height: 1.7; max-width: 520px; margin: 0 auto 40px; }
         .hero-btns { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
         .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; padding: 32px 24px; text-align: center; max-width: 1024px; margin: 0 auto; }
+        .stat-val { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
         .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 16px; }
         .pricing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 16px; }
         .endpoint-row { display: flex; align-items: center; gap: 16px; padding: 14px 24px; }
         .endpoint-desc { font-size: 13px; color: var(--muted); }
         .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 32px 24px; max-width: 1024px; margin: 0 auto; }
         .footer-links { display: flex; gap: 24px; }
-        .code-snippet { margin-top: 64px; background: #111111; border: 1px solid #1E1E1E; border-radius: 14px; padding: 24px; text-align: left; max-width: 620px; margin: 64px auto 0; overflow-x: auto; }
+        .code-snippet { background: #111111; border: 1px solid #1E1E1E; border-radius: 14px; padding: 24px; text-align: left; max-width: 620px; margin: 64px auto 0; overflow-x: auto; }
         .code-pre { font-family: var(--font-geist-mono), monospace; font-size: 13px; line-height: 1.9; margin: 0; }
+        .sec-px { padding-left: 24px; padding-right: 24px; }
 
         @media (max-width: 640px) {
-          .nav-links { gap: 12px; }
+          .nav-links { gap: 8px; }
           .nav-link-item { display: none; }
-          .hero-h1 { font-size: 32px; line-height: 1.15; }
-          .hero-btns { flex-direction: column; align-items: stretch; padding: 0 8px; }
+          .hero-h1 { font-size: 30px; line-height: 1.18; }
+          .hero-badge { font-size: 10px; padding: 5px 10px; margin-bottom: 20px; }
+          .hero-sub { font-size: 15px; margin-bottom: 28px; }
+          .hero-btns { flex-direction: column; align-items: stretch; padding: 0; }
           .hero-btns a { text-align: center; }
-          .stats-grid { grid-template-columns: repeat(2,1fr); gap: 16px; padding: 24px 16px; }
-          .features-grid { grid-template-columns: 1fr; }
-          .pricing-grid { grid-template-columns: 1fr; }
+          .stats-grid { grid-template-columns: repeat(2,1fr); gap: 12px; padding: 20px 16px; }
+          .stat-val { font-size: 22px; }
+          .features-grid { grid-template-columns: 1fr; gap: 12px; }
+          .pricing-grid { grid-template-columns: 1fr; gap: 12px; }
           .endpoint-desc { display: none; }
-          .endpoint-row { padding: 12px 16px; gap: 10px; }
-          .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
-          .footer-links { flex-wrap: wrap; gap: 16px; }
-          .code-snippet { border-radius: 10px; padding: 16px; margin-top: 40px; }
-          .code-pre { font-size: 11px; line-height: 1.7; }
-          .section-pad { padding-top: 56px !important; padding-bottom: 56px !important; }
-          .h2-mobile { font-size: 28px !important; }
-          .cta-h2 { font-size: 30px !important; }
+          .endpoint-row { padding: 11px 14px; gap: 10px; }
+          .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px 16px; }
+          .footer-links { flex-wrap: wrap; gap: 14px; }
+          .code-snippet { border-radius: 10px; padding: 14px; margin-top: 32px; }
+          .code-pre { font-size: 11px; line-height: 1.65; }
+          .section-pad { padding-top: 48px !important; padding-bottom: 48px !important; }
+          .h2-mobile { font-size: 26px !important; margin-bottom: 8px !important; }
+          .cta-h2 { font-size: 26px !important; }
+          .sec-px { padding-left: 16px !important; padding-right: 16px !important; }
         }
       `}</style>
 
       {/* NAV */}
       <nav style={s.nav}>
-        <div style={s.navInner}>
+        <div style={s.navInner} className="sec-px">
           <a href="/" style={s.brand}>
             {LOGO(36)}
             <span style={s.brandName}>PMAxis</span>
@@ -132,15 +140,15 @@ export default function Home() {
       <main style={{flex:1}}>
 
         {/* HERO */}
-        <section style={{...s.section, paddingTop:96, paddingBottom:80, textAlign:"center"}} className="section-pad">
-          <div style={{display:"inline-flex", alignItems:"center", gap:8, background:"var(--green-dim)", color:"var(--green-text)", fontSize:11, fontWeight:700, padding:"6px 14px", borderRadius:999, marginBottom:32, letterSpacing:"0.08em", textTransform:"uppercase", border:"1px solid var(--green-dim)"}}>
-            <span style={{width:6, height:6, borderRadius:"50%", background:"var(--green)", display:"inline-block"}}></span>
+        <section style={{maxWidth:1024, margin:"0 auto", paddingTop:96, paddingBottom:80, textAlign:"center"}} className="section-pad sec-px">
+          <div className="hero-badge" style={{background:"var(--green-dim)", color:"var(--green-text)", border:"1px solid var(--green-dim)"}}>
+            <span style={{width:6, height:6, borderRadius:"50%", background:"var(--green)", display:"inline-block", flexShrink:0}}></span>
             Live — 53,000+ markets indexed
           </div>
-          <h1 className="hero-h1 font-serif" style={{color:"var(--text)", marginBottom:24, maxWidth:700, margin:"0 auto 24px"}}>
+          <h1 className="hero-h1 font-serif" style={{color:"var(--text)", maxWidth:700, margin:"0 auto 20px"}}>
             Prediction market data,<br/>ready for your application.
           </h1>
-          <p style={{fontSize:17, color:"var(--muted)", lineHeight:1.7, maxWidth:520, margin:"0 auto 40px"}}>
+          <p className="hero-sub">
             Real-time prices, orderbooks, trades, signals, and on-chain data across all major prediction markets — one REST API and WebSocket stream.
           </p>
           <div className="hero-btns">
@@ -178,7 +186,7 @@ export default function Home() {
           <div className="stats-grid">
             {[{v:"53,000+",l:"Markets indexed"},{v:"916K+",l:"On-chain trades"},{v:"< 100ms",l:"API latency"},{v:"Free",l:"To start"}].map(x=>(
               <div key={x.l}>
-                <div style={{fontSize:28, fontWeight:700, letterSpacing:"-0.02em", color:"var(--text)"}}>{x.v}</div>
+                <div className="stat-val">{x.v}</div>
                 <div style={{fontSize:13, color:"var(--muted)", marginTop:4}}>{x.l}</div>
               </div>
             ))}
@@ -186,7 +194,7 @@ export default function Home() {
         </section>
 
         {/* FEATURES */}
-        <section style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad">
+        <section style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad sec-px">
           <h2 style={s.h2} className="h2-mobile">Everything your app needs</h2>
           <p style={s.sub}>One integration gives you access to the full prediction market data stack.</p>
           <div className="features-grid">
@@ -202,7 +210,7 @@ export default function Home() {
 
         {/* ENDPOINTS */}
         <section style={{background:"var(--surface)", borderTop:"1px solid var(--border)", borderBottom:"1px solid var(--border)"}}>
-          <div style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad">
+          <div style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad sec-px">
             <h2 style={s.h2} className="h2-mobile">Clean, predictable API</h2>
             <p style={s.sub}>Standard REST conventions. JSON responses. One header for auth.</p>
             <div style={{border:"1px solid var(--border)", borderRadius:12, overflow:"hidden"}}>
@@ -224,7 +232,7 @@ export default function Home() {
         </section>
 
         {/* PRICING */}
-        <section style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad">
+        <section style={{...s.section, paddingTop:96, paddingBottom:96}} className="section-pad sec-px">
           <h2 style={s.h2} className="h2-mobile">Simple pricing</h2>
           <p style={s.sub}>Start free. Scale when you need to.</p>
           <div className="pricing-grid">
@@ -264,7 +272,7 @@ export default function Home() {
 
         {/* CTA */}
         <section style={{background:"var(--text)", borderTop:"1px solid var(--border)"}}>
-          <div style={{...s.section, paddingTop:96, paddingBottom:96, textAlign:"center"}} className="section-pad">
+          <div style={{...s.section, paddingTop:96, paddingBottom:96, textAlign:"center"}} className="section-pad sec-px">
             <h2 className="font-serif cta-h2" style={{fontSize:44, letterSpacing:"-0.03em", color:"var(--bg)", marginBottom:16}}>
               Start building in minutes.
             </h2>
