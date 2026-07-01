@@ -2,36 +2,36 @@
 import { useState } from "react";
 import ThemeToggle from "../ThemeToggle";
 
-const API_URL  = "https://api.pmaxis.trade";
-const MCP_URL  = "https://mcp.pmaxis.trade";
+const API_URL = "https://api.pmaxis.trade";
+const MCP_URL = "https://mcp.pmaxis.trade";
 
+/* ── brand tokens ──────────────────────────────────────────── */
+const B = {
+  green:  "#00E676",
+  purple: "#8B5CF6",
+  black:  "#0A0A0A",
+  white:  "#FFFFFF",
+  grey:   "#A1A1AA",
+  greenDim:   "rgba(0,230,118,0.10)",
+  purpleDim:  "rgba(139,92,246,0.10)",
+  greenBorder:"rgba(0,230,118,0.25)",
+  purpleBorder:"rgba(139,92,246,0.25)",
+  grad: "linear-gradient(135deg, #00E676 0%, #8B5CF6 100%)",
+};
+
+/* ── logo ──────────────────────────────────────────────────── */
 const LOGO = (size = 36) => (
   <svg width={size} height={size} viewBox="0 0 803 795" fill="none">
     <path fill="var(--text)" d="M719.962 114.503C724.439 116.738 746.095 136.885 751.202 141.275C743.13 152.558 727.925 169.756 718.52 180.14C667.116 237.986 604.881 285.207 535.329 319.136C528.842 322.253 501.635 334.541 495.686 335.719C493.671 334.794 493.692 334.098 492.165 332.003C481.767 318.552 471.393 311.209 457.07 302.886C532.805 280.515 608.565 231.922 664.325 176.745C684.543 156.739 701.958 136.391 719.962 114.503Z"/>
     <path fill="var(--text)" d="M103.731 114.306C106.532 116.771 116.373 129.166 119.413 132.747C128.996 144.095 139.01 155.071 149.433 165.651C213.595 230.118 280.396 274.662 366.923 302.87C352.429 310.952 342.084 318.858 331.657 332.058L328.841 336.043C319.39 333.204 296.981 322.854 288.065 318.523C216.559 283.785 152.851 232.607 99.9718 173.495C90.9908 163.455 80.8168 152.054 72.5908 141.466C80.8318 133.892 95.1408 120.907 103.731 114.306Z"/>
     <path fill="var(--text)" d="M500.639 448.854C510.914 451.537 533.17 462.09 542.691 466.637C603.572 495.713 657.966 537.098 703.779 586.511C719.932 603.934 737.715 624.431 751.412 643.924C743.385 651.277 729.34 662.024 720.529 669.194C717.837 667.836 711.304 658.002 708.901 655.026C699.702 643.633 690.268 632.508 680.354 621.743C622.903 558.485 550.473 510.682 469.721 482.728C482.46 472.687 492.344 462.846 500.639 448.854Z"/>
     <path fill="var(--text)" d="M322.57 449.109C324.527 450.34 331.226 460.882 333.985 463.96C341.099 471.897 346.509 476.457 354.784 482.779C251.686 517.317 170.299 583.28 104.517 668.566L103.202 668.709C97.76 665.303 78.849 649.187 72.52 644.052C81.2 630.876 98.635 610.478 109.165 598.717C157.332 544.918 214.867 498.845 280.012 467.285C293.255 460.869 308.655 453.904 322.57 449.109Z"/>
-    <path fill="var(--green)" d="M404.129 336.369C437.402 331.991 467.935 355.383 472.368 388.649C476.801 421.915 453.459 452.487 420.201 456.975C386.865 461.473 356.206 438.064 351.762 404.721C347.319 371.378 370.778 340.757 404.129 336.369Z"/>
+    <path fill={B.green} d="M404.129 336.369C437.402 331.991 467.935 355.383 472.368 388.649C476.801 421.915 453.459 452.487 420.201 456.975C386.865 461.473 356.206 438.064 351.762 404.721C347.319 371.378 370.778 340.757 404.129 336.369Z"/>
   </svg>
 );
 
 /* ── data ──────────────────────────────────────────────────── */
-
-const NAV_LINKS = [
-  { label: "Docs",   href: `${API_URL}/docs` },
-  { label: "Status", href: `${API_URL}/status` },
-  { label: "MCP",    href: "/mcp" },
-];
-
-const SSE_CONFIG = `{
-  "mcpServers": {
-    "pmaxis": {
-      "url": "${MCP_URL}/sse?key=YOUR_API_KEY"
-    }
-  }
-}`;
-
-const NPX_CONFIG = `{
+const CLAUDE_CONFIG = `{
   "mcpServers": {
     "pmaxis": {
       "command": "npx",
@@ -44,9 +44,69 @@ const NPX_CONFIG = `{
   }
 }`;
 
+const CURSOR_CONFIG = `{
+  "mcpServers": {
+    "pmaxis": {
+      "url": "${MCP_URL}/sse?key=YOUR_API_KEY"
+    }
+  }
+}`;
+
+const WINDSURF_CONFIG = `{
+  "mcpServers": {
+    "pmaxis": {
+      "url": "${MCP_URL}/sse?key=YOUR_API_KEY"
+    }
+  }
+}`;
+
+const PYTHON_CONFIG = `from mcp.client.sse import sse_client
+from mcp import ClientSession
+
+async with sse_client(
+    "${MCP_URL}/sse?key=YOUR_API_KEY"
+) as (read, write):
+    async with ClientSession(read, write) as session:
+        await session.initialize()
+        result = await session.call_tool(
+            "get_top_markets", {"limit": 5}
+        )`;
+
 const CONFIG_PATHS = {
-  windows: `C:\\Users\\<name>\\AppData\\Roaming\\Claude\\claude_desktop_config.json`,
-  mac:     `~/Library/Application Support/Claude/claude_desktop_config.json`,
+  windows: "C:\\Users\\<name>\\AppData\\Roaming\\Claude\\claude_desktop_config.json",
+  mac:     "~/Library/Application Support/Claude/claude_desktop_config.json",
+};
+
+const AGENTS = [
+  { id: "claude",   label: "Claude Desktop", badge: "npx", color: B.green,  borderColor: B.greenBorder,  dimColor: B.greenDim },
+  { id: "cursor",   label: "Cursor",          badge: "SSE", color: B.purple, borderColor: B.purpleBorder, dimColor: B.purpleDim },
+  { id: "windsurf", label: "Windsurf",        badge: "SSE", color: B.purple, borderColor: B.purpleBorder, dimColor: B.purpleDim },
+  { id: "python",   label: "Python SDK",      badge: "SSE", color: B.purple, borderColor: B.purpleBorder, dimColor: B.purpleDim },
+];
+
+const AGENT_CONFIGS: Record<string, string> = {
+  claude:   CLAUDE_CONFIG,
+  cursor:   CURSOR_CONFIG,
+  windsurf: WINDSURF_CONFIG,
+  python:   PYTHON_CONFIG,
+};
+
+const AGENT_NOTES: Record<string, { path?: string; note: string }> = {
+  claude: {
+    path: "claude_desktop_config.json",
+    note: "Requires Node.js 18+. npx downloads the package automatically on first use. Quit Claude Desktop fully from the system tray, then reopen.",
+  },
+  cursor: {
+    path: "~/.cursor/mcp.json",
+    note: "Cursor supports SSE remote servers natively. Restart Cursor after saving.",
+  },
+  windsurf: {
+    path: "~/.codeium/windsurf/mcp_config.json",
+    note: "Windsurf supports SSE remote servers. Reload the window after saving.",
+  },
+  python: {
+    note: "Install the MCP SDK: pip install mcp. The SSE client connects directly to the hosted server.",
+  },
 };
 
 const TOOL_GROUPS = [
@@ -111,409 +171,352 @@ const TOOL_GROUPS = [
   },
 ];
 
-const EXAMPLE_PROMPTS = [
-  { prompt: "What are the top 5 prediction markets by volume right now?",                   tools: ["get_top_markets"] },
-  { prompt: "Find all markets about the 2026 US elections and compare their prices.",        tools: ["search_markets", "compare_markets"] },
-  { prompt: "Show me the orderbook for the most liquid market on Polymarket.",               tools: ["get_top_markets", "get_market_orderbook"] },
-  { prompt: "Which markets are resolving this week with the highest trading activity?",      tools: ["get_resolving_markets"] },
-  { prompt: "Analyze the price history of the Trump election market over the past 7 days.", tools: ["search_markets", "get_market_price_history"] },
-  { prompt: "Look up wallet 0x123… and summarize its open positions and total P&L.",        tools: ["get_wallet_summary", "get_wallet_open_positions"] },
-  { prompt: "Show me trending markets in the crypto category.",                              tools: ["get_trending_markets", "get_category_markets"] },
-  { prompt: "What is the current sentiment and signal for the most popular AI market?",     tools: ["search_markets", "get_market_sentiment", "get_market_signals"] },
+const PROMPTS = [
+  "What are the top 5 prediction markets by volume right now?",
+  "Find all markets about the 2026 US elections and compare their prices.",
+  "Show me the orderbook for the most liquid market today.",
+  "Which markets are resolving this week with the highest trading activity?",
+  "Analyze the price history of the most popular AI market over 7 days.",
+  "Look up wallet 0x123… and summarize its open positions and P&L.",
+  "Show me trending markets in the crypto category.",
+  "What is the current sentiment and signal for the top AI market?",
 ];
 
-/* ── component ─────────────────────────────────────────────── */
-
-function Code({ children }: { children: string }) {
-  return (
-    <code style={{
-      fontFamily: "var(--font-geist-mono), monospace",
-      fontSize: 12,
-      background: "var(--surface)",
-      border: "1px solid var(--border)",
-      borderRadius: 4,
-      padding: "2px 7px",
-      color: "var(--text)",
-    }}>
-      {children}
-    </code>
-  );
-}
-
-function PathBox({ children }: { children: string }) {
-  return (
-    <div style={{
-      fontFamily: "var(--font-geist-mono), monospace",
-      fontSize: 12,
-      background: "var(--surface)",
-      border: "1px solid var(--border)",
-      borderRadius: 6,
-      padding: "9px 14px",
-      color: "var(--muted)",
-      overflowX: "auto",
-      whiteSpace: "nowrap",
-    }}>
-      {children}
-    </div>
-  );
-}
-
-function ConfigBox({ code }: { code: string }) {
-  return (
-    <div style={{
-      background: "#111111",
-      border: "1px solid #1e1e1e",
-      borderRadius: 10,
-      padding: "20px 24px",
-      overflowX: "auto",
-    }}>
-      <pre style={{
-        fontFamily: "var(--font-geist-mono), monospace",
-        fontSize: 13,
-        lineHeight: 1.85,
-        margin: 0,
-        color: "#e4e4e4",
-      }}>
-        {code}
-      </pre>
-    </div>
-  );
-}
-
-function StepNum({ n }: { n: number }) {
-  return (
-    <div style={{
-      width: 28, height: 28, borderRadius: "50%",
-      background: "var(--green-dim)", color: "var(--green-text)",
-      fontSize: 12, fontWeight: 700,
-      display: "flex", alignItems: "center", justifyContent: "center",
-      flexShrink: 0, marginTop: 1,
-    }}>
-      {n}
-    </div>
-  );
-}
-
-function SectionLabel({ children }: { children: string }) {
-  return (
-    <div style={{
-      fontSize: 11, fontWeight: 700, textTransform: "uppercase",
-      letterSpacing: "0.1em", color: "var(--muted)",
-      marginBottom: 14, paddingBottom: 12,
-      borderBottom: "1px solid var(--border)",
-    }}>
-      {children}
-    </div>
-  );
-}
-
-type Tab = "sse" | "npx";
-
-export default function McpGuidePage() {
-  const [active, setActive] = useState<Tab>("sse");
+/* ── page ──────────────────────────────────────────────────── */
+export default function McpPage() {
+  const [agent, setAgent] = useState("claude");
+  const activeAgent = AGENTS.find(a => a.id === agent)!;
+  const note = AGENT_NOTES[agent];
 
   return (
     <>
       <style>{`
-        body { font-family: var(--font-geist-sans), 'Helvetica Neue', sans-serif; }
-        .nav-links { display: flex; align-items: center; gap: 24px; }
-        .nav-link-hide { display: block; }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
-        /* Method tabs */
-        .method-strip { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; width: fit-content; }
-        .method-btn {
-          font-size: 13px; font-weight: 600; padding: 9px 22px; cursor: pointer;
-          border: none; background: var(--surface); color: var(--muted);
-          transition: background 0.15s, color 0.15s;
-          display: flex; align-items: center; gap: 8px;
+        .mcp-page { font-family: 'Space Grotesk', 'Helvetica Neue', sans-serif; }
+
+        /* nav */
+        .mcp-nav-link { font-size: 13px; color: var(--muted); text-decoration: none; font-weight: 500; transition: color 0.15s; }
+        .mcp-nav-link:hover { color: var(--text); }
+        .mcp-nav-link.active { color: var(--text); font-weight: 600; }
+        .hide-mobile { display: block; }
+
+        /* hero */
+        .mcp-hero { background: ${B.black}; padding: 88px 24px 80px; text-align: center; position: relative; overflow: hidden; }
+        .mcp-hero::before {
+          content: '';
+          position: absolute; inset: 0;
+          background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,230,118,0.12) 0%, transparent 70%),
+                      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(139,92,246,0.10) 0%, transparent 60%);
+          pointer-events: none;
         }
-        .method-btn.on { background: var(--text); color: var(--bg); }
-        .method-btn:not(:last-child) { border-right: 1px solid var(--border); }
+        .mcp-hero-badge {
+          display: inline-flex; align-items: center; gap: 8px;
+          font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+          padding: 6px 16px; border-radius: 999px; margin-bottom: 32px;
+          background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2); color: ${B.green};
+          position: relative;
+        }
+        .mcp-hero-h1 {
+          font-size: 52px; font-weight: 700; line-height: 1.06; letter-spacing: -0.03em;
+          color: ${B.white}; max-width: 660px; margin: 0 auto 20px; position: relative;
+        }
+        .mcp-grad-text {
+          background: ${B.grad};
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .mcp-hero-sub {
+          font-size: 16px; color: ${B.grey}; line-height: 1.7;
+          max-width: 480px; margin: 0 auto 40px; position: relative;
+        }
+        .mcp-hero-cta {
+          display: inline-flex; align-items: center; gap: 10px;
+          background: ${B.grad}; color: ${B.black};
+          font-size: 14px; font-weight: 700; padding: 13px 30px;
+          border-radius: 6px; text-decoration: none; position: relative;
+          font-family: 'Space Grotesk', sans-serif;
+          transition: opacity 0.15s;
+        }
+        .mcp-hero-cta:hover { opacity: 0.88; }
 
-        /* Comparison table */
-        .cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .cmp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
-        .cmp-badge { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 999px; margin-bottom: 12px; }
-        .cmp-badge.recommended { background: var(--green-dim); color: var(--green-text); border: 1px solid var(--green-dim); }
-        .cmp-badge.dev { background: var(--surface2, #f0f0ee); color: var(--muted); border: 1px solid var(--border); }
-        .cmp-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-        .cmp-sub { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
-        .cmp-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; }
-        .cmp-li { display: flex; gap: 10px; font-size: 13px; color: var(--muted); align-items: flex-start; }
+        /* section */
+        .mcp-section { max-width: 1020px; margin: 0 auto; padding: 72px 24px; }
+        .mcp-section-dark { background: ${B.black}; }
+        .mcp-section-surf { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .mcp-h2 { font-size: 34px; font-weight: 700; letter-spacing: -0.025em; color: var(--text); margin-bottom: 10px; }
+        .mcp-h2-dark { color: ${B.white}; }
+        .mcp-sub { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 460px; margin-bottom: 48px; }
+        .mcp-sub-dark { color: ${B.grey}; }
+        .mcp-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
 
-        /* Steps */
-        .step-row { display: flex; gap: 16px; }
-        .step-body { flex: 1; }
-        .step-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-        .step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 12px; }
-        .step-note { font-size: 12px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; line-height: 1.6; margin-top: 10px; }
+        /* agent tabs */
+        .agent-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
+        .agent-tab {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 13px; font-weight: 600;
+          padding: 8px 18px; border-radius: 6px; cursor: pointer;
+          border: 1px solid var(--border);
+          background: var(--surface); color: var(--muted);
+          transition: all 0.15s; display: flex; align-items: center; gap: 8px;
+        }
+        .agent-tab-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 7px; border-radius: 4px; }
 
-        /* OS label */
-        .os-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 12px 0 5px; }
+        /* config block */
+        .config-wrap { border-radius: 12px; overflow: hidden; border: 1px solid #1e1e1e; }
+        .config-bar { background: #161616; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e1e1e; }
+        .config-dots { display: flex; gap: 6px; }
+        .config-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .config-label { font-size: 11px; color: #555; font-family: monospace; }
+        .config-pre { background: #0d0d0d; padding: 20px 24px; font-family: 'Space Grotesk', monospace; font-size: 13px; line-height: 1.9; color: #e4e4e4; overflow-x: auto; margin: 0; white-space: pre; }
+        .config-copy { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; background: transparent; border: 1px solid #333; color: #888; border-radius: 4px; padding: 4px 10px; cursor: pointer; transition: all 0.15s; }
+        .config-copy:hover { border-color: ${B.green}; color: ${B.green}; }
 
-        /* Prompt list */
-        .prompt-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 10px; }
-        .prompt-q { font-family: var(--font-serif), Georgia, serif; font-size: 15px; color: var(--text); line-height: 1.5; margin-bottom: 8px; }
-        .prompt-tools { display: flex; gap: 6px; flex-wrap: wrap; }
-        .prompt-tool { font-family: var(--font-geist-mono), monospace; font-size: 11px; color: var(--green-text, #346538); background: var(--green-dim, #EDF3EC); border-radius: 4px; padding: 2px 8px; }
+        /* path box */
+        .path-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 14px 0 5px; }
+        .path-box { font-family: monospace; font-size: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 9px 14px; color: var(--muted); overflow-x: auto; white-space: nowrap; }
 
-        /* Tool grid */
-        .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 40px; }
-        .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
-        .tool-name { font-family: var(--font-geist-mono), monospace; font-size: 12px; color: var(--green); font-weight: 600; margin-bottom: 4px; }
+        /* note box */
+        .note-box { font-size: 13px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-left: 3px solid ${B.green}; border-radius: 6px; padding: 12px 16px; line-height: 1.65; margin-top: 16px; }
+
+        /* step */
+        .step-row { display: flex; gap: 16px; margin-bottom: 32px; }
+        .step-num { width: 28px; height: 28px; border-radius: 50%; background: ${B.greenDim}; color: ${B.green}; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; border: 1px solid ${B.greenBorder}; }
+        .step-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+        .step-desc { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+        /* prompts */
+        .prompt-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 22px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start; transition: border-color 0.15s; }
+        .prompt-item:hover { border-color: ${B.greenBorder}; }
+        .prompt-arrow { color: ${B.green}; font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+        .prompt-text { font-size: 14px; color: var(--text); line-height: 1.55; font-weight: 500; }
+
+        /* tools */
+        .tool-group-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; margin-bottom: 40px; }
+        .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 13px 16px; transition: border-color 0.15s; }
+        .tool-card:hover { border-color: ${B.greenBorder}; }
+        .tool-name { font-family: monospace; font-size: 12px; font-weight: 600; color: ${B.green}; margin-bottom: 4px; }
         .tool-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
-        /* Footer */
-        .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 32px 24px; max-width: 1024px; margin: 0 auto; }
-        .footer-links { display: flex; gap: 24px; }
+        /* cta dark */
+        .mcp-cta-dark { background: ${B.black}; border-top: 1px solid #1a1a1a; }
+        .mcp-cta-inner { max-width: 1020px; margin: 0 auto; padding: 80px 24px; text-align: center; }
+        .mcp-cta-h2 { font-size: 40px; font-weight: 700; letter-spacing: -0.025em; color: ${B.white}; margin-bottom: 16px; }
+        .mcp-cta-sub { font-size: 15px; color: ${B.grey}; margin-bottom: 40px; max-width: 380px; margin-left: auto; margin-right: auto; line-height: 1.7; }
 
-        @media (max-width: 680px) {
-          .nav-link-hide { display: none; }
-          .cmp-grid { grid-template-columns: 1fr; }
+        /* footer */
+        .mcp-footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 32px 24px; max-width: 1020px; margin: 0 auto; }
+        .mcp-footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+
+        @media (max-width: 640px) {
+          .hide-mobile { display: none; }
+          .mcp-hero-h1 { font-size: 30px; }
+          .mcp-hero { padding: 60px 16px 56px; }
+          .mcp-section { padding: 48px 16px; }
+          .mcp-h2 { font-size: 26px; }
+          .mcp-cta-h2 { font-size: 28px; }
           .tool-grid { grid-template-columns: 1fr; }
-          .hero-h1 { font-size: 28px !important; }
-          .sec-px { padding-left: 16px !important; padding-right: 16px !important; }
-          .section-pad { padding-top: 48px !important; padding-bottom: 48px !important; }
-          .h2 { font-size: 26px !important; }
-          .footer-inner { flex-direction: column; align-items: flex-start; }
-          .footer-links { flex-wrap: wrap; gap: 14px; }
-          .method-strip { width: 100%; }
-          .method-btn { flex: 1; justify-content: center; padding: 9px 10px; }
+          .agent-tabs { gap: 8px; }
+          .agent-tab { font-size: 12px; padding: 7px 12px; }
+          .mcp-footer-inner { flex-direction: column; align-items: flex-start; }
         }
       `}</style>
 
-      {/* ── NAV ── */}
-      <nav style={{ position:"sticky", top:0, zIndex:50, background:"var(--bg)", borderBottom:"1px solid var(--border)", backdropFilter:"blur(8px)" }}>
-        <div style={{ maxWidth:1024, margin:"0 auto", padding:"0 24px", height:72, display:"flex", alignItems:"center", justifyContent:"space-between" }} className="sec-px">
-          <a href="/" style={{ display:"flex", alignItems:"center", gap:12, textDecoration:"none" }}>
-            {LOGO(34)}
-            <span style={{ fontSize:20, fontWeight:700, letterSpacing:"-0.02em", color:"var(--text)" }}>PMAxis</span>
-          </a>
-          <div className="nav-links">
-            {NAV_LINKS.map(l => (
-              <a key={l.label} href={l.href} className="nav-link-hide" style={{ fontSize:13, color: l.label==="MCP" ? "var(--text)" : "var(--muted)", fontWeight: l.label==="MCP" ? 600 : 400, textDecoration:"none" }}>{l.label}</a>
-            ))}
-            <a href={`${API_URL}/login`} className="nav-link-hide" style={{ fontSize:13, color:"var(--muted)", textDecoration:"none" }}>Sign in</a>
-            <ThemeToggle />
-            <a href={`${API_URL}/signup`} style={{ fontSize:13, fontWeight:700, background:"var(--green)", color:"var(--bg)", padding:"8px 16px", borderRadius:5, textDecoration:"none" }}>Get API key</a>
-          </div>
-        </div>
-      </nav>
+      <div className="mcp-page">
 
-      <main style={{ flex:1 }}>
+        {/* ── NAV ── */}
+        <nav style={{ position:"sticky", top:0, zIndex:50, background:"var(--bg)", borderBottom:"1px solid var(--border)", backdropFilter:"blur(8px)" }}>
+          <div style={{ maxWidth:1020, margin:"0 auto", padding:"0 24px", height:68, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+            <a href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none" }}>
+              {LOGO(32)}
+              <span style={{ fontSize:18, fontWeight:700, letterSpacing:"-0.02em", color:"var(--text)", fontFamily:"'Space Grotesk', sans-serif" }}>PMAxis</span>
+            </a>
+            <div style={{ display:"flex", alignItems:"center", gap:24 }}>
+              <a href={`${API_URL}/docs`} className="mcp-nav-link hide-mobile">Docs</a>
+              <a href={`${API_URL}/status`} className="mcp-nav-link hide-mobile">Status</a>
+              <a href="/mcp" className="mcp-nav-link active hide-mobile">MCP</a>
+              <a href={`${API_URL}/login`} className="mcp-nav-link hide-mobile">Sign in</a>
+              <ThemeToggle />
+              <a href={`${API_URL}/signup`} style={{ fontSize:13, fontWeight:700, background:B.grad, color:B.black, padding:"8px 18px", borderRadius:5, textDecoration:"none", fontFamily:"'Space Grotesk', sans-serif" }}>Get API key</a>
+            </div>
+          </div>
+        </nav>
 
         {/* ── HERO ── */}
-        <section style={{ maxWidth:1024, margin:"0 auto", padding:"72px 24px 64px", textAlign:"center" }} className="section-pad sec-px">
-          <div style={{ display:"inline-flex", alignItems:"center", gap:8, fontSize:11, fontWeight:700, padding:"5px 14px", borderRadius:999, letterSpacing:"0.08em", textTransform:"uppercase", background:"var(--green-dim)", color:"var(--green-text)", border:"1px solid var(--green-dim)", marginBottom:28 }}>
-            <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--green)", display:"inline-block" }}></span>
-            MCP — Model Context Protocol
+        <div className="mcp-hero">
+          <div className="mcp-hero-badge">
+            <span style={{ width:6, height:6, borderRadius:"50%", background:B.green, display:"inline-block" }}></span>
+            Model Context Protocol · 34 live tools
           </div>
-          <h1 className="font-serif hero-h1" style={{ fontSize:48, lineHeight:1.08, letterSpacing:"-0.03em", color:"var(--text)", maxWidth:660, margin:"0 auto 18px" }}>
-            Use Claude to explore<br />prediction markets.
+          <h1 className="mcp-hero-h1">
+            Ask your AI agent about<br />
+            <span className="mcp-grad-text">any prediction market.</span>
           </h1>
-          <p style={{ fontSize:16, color:"var(--muted)", lineHeight:1.7, maxWidth:500, margin:"0 auto 0" }}>
-            Connect Claude Desktop to live PMAxis data — prices, orderbooks, trades, signals, wallet history — using the Model Context Protocol. No prompting gymnastics. Just ask.
+          <p className="mcp-hero-sub">
+            Connect Claude, Cursor, Windsurf, or any MCP-compatible agent to live PMAxis data — prices, orderbooks, signals, and wallet history across 53,000+ markets.
           </p>
-        </section>
+          <a href={`${API_URL}/signup`} className="mcp-hero-cta">
+            Get free API key
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
 
-        <div style={{ borderTop:"1px solid var(--border)" }} />
-
-        {/* ── WHICH METHOD ── */}
-        <section style={{ maxWidth:1024, margin:"0 auto", padding:"72px 24px 64px" }} className="section-pad sec-px">
-          <h2 className="font-serif h2" style={{ fontSize:34, letterSpacing:"-0.02em", color:"var(--text)", marginBottom:10 }}>Two ways to connect</h2>
-          <p style={{ fontSize:15, color:"var(--muted)", lineHeight:1.7, marginBottom:40, maxWidth:480 }}>
-            Both methods give Claude access to the same 34 tools. Pick whichever fits your setup.
-          </p>
-
-          <div className="cmp-grid">
-            {/* SSE */}
-            <div className="cmp-card" style={{ borderColor: active === "sse" ? "var(--green)" : "var(--border)" }}>
-              <div className="cmp-badge recommended">Recommended</div>
-              <div className="cmp-title">Hosted SSE</div>
-              <div className="cmp-sub">Connects to our server at <Code>mcp.pmaxis.trade</Code>. Nothing to install locally.</div>
-              <ul className="cmp-list">
-                {[
-                  "No Node.js or npm required",
-                  "Works on any OS — Windows, Mac, Linux",
-                  "Always the latest version, automatically",
-                  "One URL in the config file",
-                ].map(t => (
-                  <li key={t} className="cmp-li">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5" style={{ flexShrink:0, marginTop:1 }}><polyline points="20 6 9 17 4 12"/></svg>
-                    {t}
-                  </li>
-                ))}
-              </ul>
-              <button onClick={() => setActive("sse")} className="method-btn on" style={{ marginTop:20, borderRadius:6, width:"100%", justifyContent:"center", border:"1px solid var(--text)", padding:"10px 0" }}>
-                View SSE setup
-              </button>
-            </div>
-
-            {/* npx */}
-            <div className="cmp-card" style={{ borderColor: active === "npx" ? "var(--green)" : "var(--border)" }}>
-              <div className="cmp-badge dev">For developers</div>
-              <div className="cmp-title">npx (local)</div>
-              <div className="cmp-sub">Runs the MCP server on your machine via <Code>@pmaxis/mcp-server</Code> on npm.</div>
-              <ul className="cmp-list">
-                {[
-                  "Requires Node.js 18+",
-                  "Package auto-downloaded on first use",
-                  "Runs entirely offline once cached",
-                  "Good for testing and development",
-                ].map(t => (
-                  <li key={t} className="cmp-li">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="2.5" style={{ flexShrink:0, marginTop:1 }}><polyline points="20 6 9 17 4 12"/></svg>
-                    {t}
-                  </li>
-                ))}
-              </ul>
-              <button onClick={() => setActive("npx")} className="method-btn" style={{ marginTop:20, borderRadius:6, width:"100%", justifyContent:"center", border:"1px solid var(--border)", padding:"10px 0", background:"var(--surface)", color:"var(--muted)" }}>
-                View npx setup
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <div style={{ borderTop:"1px solid var(--border)" }} />
+        <hr className="mcp-divider" />
 
         {/* ── SETUP GUIDE ── */}
-        <section style={{ maxWidth:1024, margin:"0 auto", padding:"72px 24px 64px" }} className="section-pad sec-px">
+        <section style={{ maxWidth:1020, margin:"0 auto", padding:"72px 24px" }}>
+          <h2 className="mcp-h2">Connect your agent</h2>
+          <p className="mcp-sub">
+            Pick your agent below. Each has a different config format — the right one is shown automatically.
+          </p>
 
-          {/* Tab strip */}
-          <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:48 }}>
-            <h2 className="font-serif h2" style={{ fontSize:34, letterSpacing:"-0.02em", color:"var(--text)", margin:0 }}>Setup guide</h2>
-            <div className="method-strip" style={{ marginLeft:"auto" }}>
-              <button className={`method-btn${active==="sse" ? " on" : ""}`} onClick={() => setActive("sse")}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
-                Hosted SSE
+          {/* Agent selector */}
+          <div className="agent-tabs">
+            {AGENTS.map(a => (
+              <button
+                key={a.id}
+                className="agent-tab"
+                onClick={() => setAgent(a.id)}
+                style={{
+                  borderColor: agent === a.id ? a.borderColor : "var(--border)",
+                  background:  agent === a.id ? a.dimColor   : "var(--surface)",
+                  color:       agent === a.id ? a.color      : "var(--muted)",
+                }}
+              >
+                {a.label}
+                <span className="agent-tab-badge" style={{ background: agent === a.id ? a.dimColor : "var(--surface2,#f0f0ee)", color: a.color, border:`1px solid ${a.borderColor}` }}>
+                  {a.badge}
+                </span>
               </button>
-              <button className={`method-btn${active==="npx" ? " on" : ""}`} onClick={() => setActive("npx")}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                npx
-              </button>
-            </div>
+            ))}
           </div>
 
-          <div style={{ display:"flex", flexDirection:"column", gap:36 }}>
-
-            {/* Step 1 — same for both */}
+          {/* Steps */}
+          <div>
+            {/* Step 1 — get key */}
             <div className="step-row">
-              <StepNum n={1} />
-              <div className="step-body">
+              <div className="step-num">1</div>
+              <div>
                 <div className="step-title">Get a free API key</div>
                 <div className="step-desc">
-                  Sign up at <a href={`${API_URL}/signup`} style={{ color:"var(--text)", textDecoration:"underline", textUnderlineOffset:3 }}>api.pmaxis.trade/signup</a>. No credit card, no waitlist — key is issued instantly. Copy it from the dashboard.
+                  Sign up at <a href={`${API_URL}/signup`} style={{ color:"var(--text)", textDecoration:"underline", textUnderlineOffset:3 }}>api.pmaxis.trade/signup</a> — no credit card, key issued instantly.
                 </div>
               </div>
             </div>
 
-            {/* Step 2 — prereq, method-specific */}
-            {active === "npx" && (
+            {/* Step 2 — node (claude only) */}
+            {agent === "claude" && (
               <div className="step-row">
-                <StepNum n={2} />
-                <div className="step-body">
-                  <div className="step-title">Install Node.js 18 or later</div>
+                <div className="step-num">2</div>
+                <div>
+                  <div className="step-title">Install Node.js 18+</div>
                   <div className="step-desc">
-                    Download from <a href="https://nodejs.org" style={{ color:"var(--text)", textDecoration:"underline", textUnderlineOffset:3 }}>nodejs.org</a>. The <Code>npx</Code> command is included with Node.js. Run <Code>node -v</Code> in your terminal to confirm — it should print <Code>v18.x</Code> or higher.
-                  </div>
-                  <div className="step-note">
-                    You do not need to install the package manually. <Code>npx -y @pmaxis/mcp-server</Code> downloads and runs it automatically on first use.
+                    Download from <a href="https://nodejs.org" style={{ color:"var(--text)", textDecoration:"underline", textUnderlineOffset:3 }}>nodejs.org</a>. Confirm with <code style={{ fontFamily:"monospace", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:4, padding:"2px 6px", fontSize:12 }}>node -v</code> in your terminal.
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Step 2/3 — open config file */}
+            {/* Step 2/3 — config */}
             <div className="step-row">
-              <StepNum n={active === "npx" ? 3 : 2} />
-              <div className="step-body">
-                <div className="step-title">Open claude_desktop_config.json</div>
-                <div className="step-desc">
-                  Claude Desktop stores its MCP config in a JSON file. Open it in any text editor — it may not exist yet, in which case create it.
+              <div className="step-num">{agent === "claude" ? 3 : 2}</div>
+              <div style={{ flex:1 }}>
+                <div className="step-title">
+                  {note.path ? `Add to ${note.path}` : "Connect via SDK"}
                 </div>
-                <div className="os-label">Windows</div>
-                <PathBox>{CONFIG_PATHS.windows}</PathBox>
-                <div className="os-label">macOS</div>
-                <PathBox>{CONFIG_PATHS.mac}</PathBox>
-              </div>
-            </div>
-
-            {/* Step 3/4 — paste config */}
-            <div className="step-row">
-              <StepNum n={active === "npx" ? 4 : 3} />
-              <div className="step-body">
-                <div className="step-title">Paste the config and add your key</div>
-                <div className="step-desc">
-                  {active === "sse"
-                    ? <>Copy the block below into the file. Replace <Code>YOUR_API_KEY</Code> with the key you copied in step 1. If the file already has a <Code>mcpServers</Code> object, add the <Code>pmaxis</Code> entry inside it.</>
-                    : <>Copy the block below into the file. Replace <Code>YOUR_API_KEY</Code> in the <Code>env</Code> block. The <Code>PMAXIS_API_URL</Code> line can stay as-is.</>
+                <div className="step-desc" style={{ marginBottom:14 }}>
+                  {agent === "claude"
+                    ? <>Open the file below, paste the config, replace <code style={{ fontFamily:"monospace", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:4, padding:"2px 6px", fontSize:12 }}>YOUR_API_KEY</code> with your key.</>
+                    : agent === "python"
+                    ? "Install the MCP SDK and paste this snippet into your agent code."
+                    : <>Open the config file for {activeAgent.label}, paste this block, replace <code style={{ fontFamily:"monospace", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:4, padding:"2px 6px", fontSize:12 }}>YOUR_API_KEY</code>.</>
                   }
                 </div>
-                <ConfigBox code={active === "sse" ? SSE_CONFIG : NPX_CONFIG} />
-                {active === "sse" && (
-                  <div className="step-note">
-                    The <Code>url</Code> field points to our hosted server. Your API key travels in the query string over HTTPS — it is never stored or logged on our end beyond normal request auth.
-                  </div>
+
+                {/* File paths for Claude Desktop */}
+                {agent === "claude" && (
+                  <>
+                    <div className="path-label">Windows</div>
+                    <div className="path-box">{CONFIG_PATHS.windows}</div>
+                    <div className="path-label">macOS</div>
+                    <div className="path-box">{CONFIG_PATHS.mac}</div>
+                    <div style={{ marginTop:16 }} />
+                  </>
                 )}
-                {active === "npx" && (
-                  <div className="step-note">
-                    Claude Desktop reads the <Code>env</Code> block and passes those variables to the spawned process. Your key stays on your machine.
+
+                {/* Config block */}
+                <div className="config-wrap">
+                  <div className="config-bar">
+                    <div className="config-dots">
+                      <div className="config-dot" style={{ background:"#FF5F57" }}></div>
+                      <div className="config-dot" style={{ background:"#FFBD2E" }}></div>
+                      <div className="config-dot" style={{ background:"#28C840" }}></div>
+                    </div>
+                    <span className="config-label">{note.path || "agent.py"}</span>
+                    <button className="config-copy" onClick={(e) => {
+                      const btn = e.currentTarget;
+                      navigator.clipboard?.writeText(AGENT_CONFIGS[agent]);
+                      btn.textContent = "Copied!";
+                      setTimeout(() => { btn.textContent = "Copy"; }, 2000);
+                    }}>Copy</button>
                   </div>
-                )}
+                  <pre className="config-pre">{AGENT_CONFIGS[agent]}</pre>
+                </div>
+
+                <div className="note-box">{note.note}</div>
               </div>
             </div>
 
-            {/* Final step — restart */}
-            <div className="step-row">
-              <StepNum n={active === "npx" ? 5 : 4} />
-              <div className="step-body">
-                <div className="step-title">Quit and reopen Claude Desktop</div>
-                <div className="step-desc">
-                  A full quit (not just closing the window) is required. After relaunch, open a new conversation. A small <strong>hammer icon</strong> appears in the chat input bar — clicking it shows the loaded tools. If you see PMAxis tools listed, you are connected.
-                </div>
-                <div className="step-note">
-                  If the hammer icon does not appear: double-check your JSON syntax (a trailing comma or missing brace is the most common cause), confirm the file is saved, and try quitting again.
+            {/* Step 3/4 — restart (not python) */}
+            {agent !== "python" && (
+              <div className="step-row">
+                <div className="step-num">{agent === "claude" ? 4 : 3}</div>
+                <div>
+                  <div className="step-title">
+                    {agent === "claude" ? "Quit and reopen Claude Desktop" : `Restart ${activeAgent.label}`}
+                  </div>
+                  <div className="step-desc">
+                    {agent === "claude"
+                      ? "Quit fully from the system tray (not just close the window). After relaunch, a hammer icon appears in the chat input — click it to confirm PMAxis tools are loaded."
+                      : `Reload or restart ${activeAgent.label} after saving the config. PMAxis tools appear automatically in the agent's tool list.`
+                    }
+                  </div>
                 </div>
               </div>
-            </div>
-
+            )}
           </div>
         </section>
 
-        <div style={{ borderTop:"1px solid var(--border)" }} />
+        <hr className="mcp-divider" />
 
-        {/* ── EXAMPLE PROMPTS ── */}
-        <section style={{ background:"var(--surface)", borderBottom:"1px solid var(--border)" }}>
-          <div style={{ maxWidth:1024, margin:"0 auto", padding:"72px 24px 64px" }} className="section-pad sec-px">
-            <h2 className="font-serif h2" style={{ fontSize:34, letterSpacing:"-0.02em", color:"var(--text)", marginBottom:10 }}>What to ask Claude</h2>
-            <p style={{ fontSize:15, color:"var(--muted)", lineHeight:1.7, marginBottom:48, maxWidth:480 }}>
-              Once connected, these prompts work out of the box. Claude picks the right tools automatically — you do not need to name them.
+        {/* ── PROMPTS ── */}
+        <div className="mcp-section-surf">
+          <div className="mcp-section">
+            <h2 className="mcp-h2">What to ask</h2>
+            <p className="mcp-sub">
+              Once connected, ask naturally. Your agent picks the right tools automatically.
             </p>
             <div>
-              {EXAMPLE_PROMPTS.map((item, i) => (
+              {PROMPTS.map((p, i) => (
                 <div key={i} className="prompt-item">
-                  <div style={{ fontSize:11, color:"var(--muted)", fontFamily:"monospace", marginBottom:6, opacity:0.6 }}>prompt {i + 1}</div>
-                  <div className="prompt-q">&ldquo;{item.prompt}&rdquo;</div>
-                  <div className="prompt-tools">
-                    {item.tools.map(t => <span key={t} className="prompt-tool">{t}</span>)}
-                  </div>
+                  <span className="prompt-arrow">›</span>
+                  <span className="prompt-text">{p}</span>
                 </div>
               ))}
             </div>
           </div>
-        </section>
+        </div>
 
-        <div style={{ borderTop:"1px solid var(--border)" }} />
+        <hr className="mcp-divider" />
 
-        {/* ── TOOL REFERENCE ── */}
-        <section style={{ maxWidth:1024, margin:"0 auto", padding:"72px 24px 64px" }} className="section-pad sec-px">
-          <h2 className="font-serif h2" style={{ fontSize:34, letterSpacing:"-0.02em", color:"var(--text)", marginBottom:10 }}>34 tools, live data</h2>
-          <p style={{ fontSize:15, color:"var(--muted)", lineHeight:1.7, marginBottom:56, maxWidth:480 }}>
-            Every tool calls the PMAxis REST API in real time. No cached or stale data.
-          </p>
+        {/* ── TOOLS ── */}
+        <div className="mcp-section">
+          <h2 className="mcp-h2">34 tools, live data</h2>
+          <p className="mcp-sub">Every tool calls the PMAxis REST API in real time. No stale data.</p>
           {TOOL_GROUPS.map(group => (
             <div key={group.label}>
-              <SectionLabel>{group.label}</SectionLabel>
+              <div className="tool-group-label">{group.label}</div>
               <div className="tool-grid">
                 {group.tools.map(tool => (
                   <div key={tool.name} className="tool-card">
@@ -524,45 +527,41 @@ export default function McpGuidePage() {
               </div>
             </div>
           ))}
-        </section>
+        </div>
 
         {/* ── CTA ── */}
-        <section style={{ background:"var(--text)", borderTop:"1px solid var(--border)" }}>
-          <div style={{ maxWidth:1024, margin:"0 auto", padding:"80px 24px", textAlign:"center" }} className="section-pad sec-px">
-            <h2 className="font-serif" style={{ fontSize:40, letterSpacing:"-0.03em", color:"var(--bg)", marginBottom:16 }}>
-              Ready to start?
+        <div className="mcp-cta-dark">
+          <div className="mcp-cta-inner">
+            <h2 className="mcp-cta-h2">
+              Ready to <span className="mcp-grad-text">start?</span>
             </h2>
-            <p style={{ fontSize:15, color:"rgba(160,160,160,0.9)", marginBottom:40, maxWidth:400, margin:"0 auto 40px", lineHeight:1.7 }}>
-              Free API key. No credit card. Every tool available on the free tier.
-            </p>
+            <p className="mcp-cta-sub">Free API key. No credit card. All 34 tools on the free tier.</p>
             <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap" }}>
-              <a href={`${API_URL}/signup`} style={{ display:"inline-block", background:"var(--green)", color:"var(--bg)", fontSize:14, fontWeight:700, padding:"13px 30px", borderRadius:6, textDecoration:"none" }}>
-                Get free API key
-              </a>
-              <a href={`${API_URL}/docs`} style={{ display:"inline-block", background:"transparent", color:"rgba(200,200,200,0.85)", fontSize:14, fontWeight:500, padding:"13px 30px", borderRadius:6, textDecoration:"none", border:"1px solid rgba(255,255,255,0.18)" }}>
+              <a href={`${API_URL}/signup`} className="mcp-hero-cta">Get free API key</a>
+              <a href={`${API_URL}/docs`} style={{ display:"inline-flex", alignItems:"center", fontSize:14, fontWeight:600, color:B.grey, padding:"13px 28px", borderRadius:6, textDecoration:"none", border:`1px solid #2a2a2a`, fontFamily:"'Space Grotesk', sans-serif", transition:"border-color 0.15s" }}>
                 API reference
               </a>
             </div>
           </div>
-        </section>
-
-      </main>
-
-      {/* ── FOOTER ── */}
-      <footer style={{ borderTop:"1px solid var(--border)", background:"var(--bg)" }}>
-        <div className="footer-inner">
-          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            {LOGO(24)}
-            <span style={{ fontSize:14, fontWeight:600, color:"var(--text)" }}>PMAxis</span>
-          </div>
-          <div className="footer-links">
-            {[["Docs",`${API_URL}/docs`],["Status",`${API_URL}/status`],["MCP","/mcp"],["Sign up",`${API_URL}/signup`],["Login",`${API_URL}/login`]].map(([l,h])=>(
-              <a key={l} href={h} style={{ fontSize:12, color:"var(--muted)", textDecoration:"none" }}>{l}</a>
-            ))}
-          </div>
-          <div style={{ fontSize:12, color:"var(--muted)" }}>© 2026 PMAxis. All rights reserved.</div>
         </div>
-      </footer>
+
+        {/* ── FOOTER ── */}
+        <footer style={{ borderTop:"1px solid var(--border)", background:"var(--bg)" }}>
+          <div className="mcp-footer-inner">
+            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+              {LOGO(24)}
+              <span style={{ fontSize:14, fontWeight:600, color:"var(--text)", fontFamily:"'Space Grotesk', sans-serif" }}>PMAxis</span>
+            </div>
+            <div className="mcp-footer-links">
+              {[["Docs",`${API_URL}/docs`],["Status",`${API_URL}/status`],["MCP","/mcp"],["Sign up",`${API_URL}/signup`],["Login",`${API_URL}/login`]].map(([l,h])=>(
+                <a key={l} href={h} style={{ fontSize:12, color:"var(--muted)", textDecoration:"none", fontFamily:"'Space Grotesk', sans-serif" }}>{l}</a>
+              ))}
+            </div>
+            <div style={{ fontSize:12, color:"var(--muted)", fontFamily:"'Space Grotesk', sans-serif" }}>© 2026 PMAxis. All rights reserved.</div>
+          </div>
+        </footer>
+
+      </div>
     </>
   );
 }
