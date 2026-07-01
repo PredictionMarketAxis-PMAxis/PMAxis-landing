@@ -77,8 +77,26 @@ const CONFIG_PATHS = {
   mac:     "~/Library/Application Support/Claude/claude_desktop_config.json",
 };
 
+const NPM_CONFIG = `# Install globally once
+npm install -g @pmaxis/mcp-server
+
+# Then add to your claude_desktop_config.json:
+{
+  "mcpServers": {
+    "pmaxis": {
+      "command": "pmaxis-mcp",
+      "args": [],
+      "env": {
+        "PMAXIS_API_KEY": "YOUR_API_KEY",
+        "PMAXIS_API_URL": "${API_URL}"
+      }
+    }
+  }
+}`;
+
 const AGENTS = [
   { id: "claude",   label: "Claude Desktop", badge: "npx", color: B.green,  borderColor: B.greenBorder,  dimColor: B.greenDim },
+  { id: "npm",      label: "npm (global)",    badge: "npm", color: B.green,  borderColor: B.greenBorder,  dimColor: B.greenDim },
   { id: "cursor",   label: "Cursor",          badge: "SSE", color: B.purple, borderColor: B.purpleBorder, dimColor: B.purpleDim },
   { id: "windsurf", label: "Windsurf",        badge: "SSE", color: B.purple, borderColor: B.purpleBorder, dimColor: B.purpleDim },
   { id: "python",   label: "Python SDK",      badge: "SSE", color: B.purple, borderColor: B.purpleBorder, dimColor: B.purpleDim },
@@ -86,6 +104,7 @@ const AGENTS = [
 
 const AGENT_CONFIGS: Record<string, string> = {
   claude:   CLAUDE_CONFIG,
+  npm:      NPM_CONFIG,
   cursor:   CURSOR_CONFIG,
   windsurf: WINDSURF_CONFIG,
   python:   PYTHON_CONFIG,
@@ -94,7 +113,11 @@ const AGENT_CONFIGS: Record<string, string> = {
 const AGENT_NOTES: Record<string, { path?: string; note: string }> = {
   claude: {
     path: "claude_desktop_config.json",
-    note: "Requires Node.js 18+. npx downloads the package automatically on first use. Quit Claude Desktop fully from the system tray, then reopen.",
+    note: "Requires Node.js 18+. npx downloads the package automatically on first use — no install step needed. Quit Claude Desktop fully from the system tray, then reopen.",
+  },
+  npm: {
+    path: "claude_desktop_config.json",
+    note: "Global install runs faster than npx since the package is already on disk. Run the npm install once, then use the config above. Works with Claude Desktop, Cursor, or any agent that supports stdio.",
   },
   cursor: {
     path: "~/.cursor/mcp.json",
@@ -105,7 +128,7 @@ const AGENT_NOTES: Record<string, { path?: string; note: string }> = {
     note: "Windsurf supports SSE remote servers. Reload the window after saving.",
   },
   python: {
-    note: "Install the MCP SDK: pip install mcp. The SSE client connects directly to the hosted server.",
+    note: "Install the MCP SDK: pip install mcp. The SSE client connects directly to the hosted server — no local process needed.",
   },
 };
 
@@ -292,12 +315,12 @@ export default function McpPage() {
         .prompt-text { font-size: 14px; color: var(--text); line-height: 1.55; font-weight: 500; }
 
         /* tools */
-        .tool-group-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
-        .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; margin-bottom: 40px; }
-        .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 13px 16px; transition: border-color 0.15s; }
+        .tool-group-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 44px; }
+        .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; transition: border-color 0.15s; }
         .tool-card:hover { border-color: ${B.greenBorder}; }
-        .tool-name { font-family: monospace; font-size: 12px; font-weight: 600; color: ${B.green}; margin-bottom: 4px; }
-        .tool-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+        .tool-name { font-family: monospace; font-size: 13px; font-weight: 600; color: ${B.green}; margin-bottom: 6px; }
+        .tool-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
 
         /* cta dark */
         .mcp-cta-dark { background: ${B.black}; border-top: 1px solid #1a1a1a; }
@@ -405,8 +428,8 @@ export default function McpPage() {
               </div>
             </div>
 
-            {/* Step 2 — node (claude only) */}
-            {agent === "claude" && (
+            {/* Step 2 — node (claude + npm) */}
+            {(agent === "claude" || agent === "npm") && (
               <div className="step-row">
                 <div className="step-num">2</div>
                 <div>
@@ -426,7 +449,7 @@ export default function McpPage() {
                   {note.path ? `Add to ${note.path}` : "Connect via SDK"}
                 </div>
                 <div className="step-desc" style={{ marginBottom:14 }}>
-                  {agent === "claude"
+                  {(agent === "claude" || agent === "npm")
                     ? <>Open the file below, paste the config, replace <code style={{ fontFamily:"monospace", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:4, padding:"2px 6px", fontSize:12 }}>YOUR_API_KEY</code> with your key.</>
                     : agent === "python"
                     ? "Install the MCP SDK and paste this snippet into your agent code."
@@ -434,8 +457,8 @@ export default function McpPage() {
                   }
                 </div>
 
-                {/* File paths for Claude Desktop */}
-                {agent === "claude" && (
+                {/* File paths for Claude Desktop + npm */}
+                {(agent === "claude" || agent === "npm") && (
                   <>
                     <div className="path-label">Windows</div>
                     <div className="path-box">{CONFIG_PATHS.windows}</div>
@@ -471,13 +494,13 @@ export default function McpPage() {
             {/* Step 3/4 — restart (not python) */}
             {agent !== "python" && (
               <div className="step-row">
-                <div className="step-num">{agent === "claude" ? 4 : 3}</div>
+                <div className="step-num">{(agent === "claude" || agent === "npm") ? 4 : 3}</div>
                 <div>
                   <div className="step-title">
-                    {agent === "claude" ? "Quit and reopen Claude Desktop" : `Restart ${activeAgent.label}`}
+                    {(agent === "claude" || agent === "npm") ? "Quit and reopen Claude Desktop" : `Restart ${activeAgent.label}`}
                   </div>
                   <div className="step-desc">
-                    {agent === "claude"
+                    {(agent === "claude" || agent === "npm")
                       ? "Quit fully from the system tray (not just close the window). After relaunch, a hammer icon appears in the chat input — click it to confirm PMAxis tools are loaded."
                       : `Reload or restart ${activeAgent.label} after saving the config. PMAxis tools appear automatically in the agent's tool list.`
                     }
