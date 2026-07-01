@@ -5,6 +5,7 @@ const API_URL = "https://api.pmaxis.trade";
 const NAV_LINKS = [
   { label: "Docs",   href: `${API_URL}/docs` },
   { label: "Status", href: `${API_URL}/status` },
+  { label: "MCP",    href: "/mcp" },
 ];
 
 const ENDPOINTS = [
@@ -294,7 +295,7 @@ export default function Home() {
             <span style={{fontSize:14, fontWeight:600, color:"var(--text)"}}>PMAxis</span>
           </div>
           <div className="footer-links">
-            {[["Docs",`${API_URL}/docs`],["Status",`${API_URL}/status`],["Sign up",`${API_URL}/signup`],["Login",`${API_URL}/login`]].map(([l,h])=>(
+            {[["Docs",`${API_URL}/docs`],["Status",`${API_URL}/status`],["MCP","/mcp"],["Sign up",`${API_URL}/signup`],["Login",`${API_URL}/login`]].map(([l,h])=>(
               <a key={l} href={h} style={{fontSize:12, color:"var(--muted)", textDecoration:"none"}}>{l}</a>
             ))}
           </div>
